@@ -1,0 +1,15 @@
+.sidebar-links .sidebar-link {
+  display: block;
+  padding: 10px 15px;
+  color: #343a40;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s;
+}
+
+.sidebar-links .sidebar-link:hover {
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  transform: translateX(4px);
+}

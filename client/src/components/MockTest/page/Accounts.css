@@ -1,0 +1,17 @@
+.backbtn{
+    position: fixed;
+    top:3px;
+    left: 10px;
+    /* background-color: #4b49ac; */
+    color: rgb(41, 39, 39);
+    border: none;
+    padding: 5px 10px;  
+    border-radius: 300px;
+    font-weight: 300;
+    font-size: 14px;
+    cursor: pointer;
+    /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+    transition: all 0.3s ease;
+    z-index: 1000;
+    text-justify: distribute-all-lines;
+}
