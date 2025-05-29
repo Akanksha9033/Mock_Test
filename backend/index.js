@@ -62,7 +62,7 @@ app.use(
   })
 );
 
-app.use(cors({ origin: "https://www.smartlearning.co.in" }));
+// app.use(cors({ origin: "https://www.smartlearning.co.in" }));
 
 
 
