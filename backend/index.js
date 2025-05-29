@@ -46,7 +46,7 @@ app.use(cors())
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://mock-test-1nfm.vercel.app",
+  "https://www.smartlearning.co.in",
 ];
 
 app.use(
@@ -62,7 +62,7 @@ app.use(
   })
 );
 
-app.use(cors({ origin: "https://mock-test-1nfm.vercel.app" }));
+app.use(cors({ origin: "https://www.smartlearning.co.in" }));
 
 
 
