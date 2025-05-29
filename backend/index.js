@@ -133,7 +133,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     await PasswordReset.create({ email, token, expiresAt });
     console.log("[FORGOT PASSWORD] Password reset token created for:", email);  
 
-    const resetLink = `${process.env.FRONTEND_BASE_URL}/reset-password/${token}`;
+    const resetLink = `https://mock-test-3.onrender.com/reset-password/${token}`;
     console.log("[FORGOT PASSWORD] Reset Link:", resetLink);
 
     console.log("[FORGOT PASSWORD] EMAIL_USER:", process.env.EMAIL_USER);
