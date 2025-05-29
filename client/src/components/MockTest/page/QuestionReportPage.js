@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import LoadingAnimation from "../../LoadingAnimation";
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
@@ -28,7 +29,7 @@ const QuestionReportPage = () => {
     fetchReport();
   }, [resultId]);
 
-  if (!report) return <div className="text-center mt-5">Loading full report...</div>;
+  if (!report) return <div className="text-center mt-5"><LoadingAnimation /></div>;
 
   const {
     testTitle,

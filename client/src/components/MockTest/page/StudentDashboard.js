@@ -286,6 +286,7 @@ import { Chart as ChartJS } from 'chart.js/auto';
  
 import StudentSidebar from './StudentSidebar';
 import { AuthContext } from '../context/AuthContext';
+import LoadingAnimation from '../../LoadingAnimation';
  
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
@@ -370,7 +371,7 @@ const avgScore = (
         }}
       >
         {loading ? (
-          <p>Loading dashboard...</p>
+          <p><LoadingAnimation /></p>
         ) : (
           <div className="container-fluid">
             <h2 className="mb-4">📊 Student Dashboard</h2>

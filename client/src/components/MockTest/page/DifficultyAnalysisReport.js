@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import LoadingAnimation from "../../LoadingAnimation";
 
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
 
@@ -27,7 +28,7 @@ const DifficultlyAnalysisReport = () => {
 
 
   if (loading || !result) {
-    return <div className="container mt-4">Loading...</div>;
+    return <div className="container mt-4"><LoadingAnimation /></div>;
   }
 
   const totalScore = result.score || 0;

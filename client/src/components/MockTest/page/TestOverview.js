@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../context/AuthContext';
+import LoadingAnimation from '../../LoadingAnimation'
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
@@ -139,7 +140,7 @@ const totalMarks = test?.questions?.reduce((sum, q) => sum + (q.marks || 1), 0);
   const hasInProgress = attempts.some((a) => a.status === 'in-progress');
 
   if (loading || !test) {
-    return <div className="text-center mt-5">Loading...</div>;
+    return <div className="text-center mt-5"><LoadingAnimation /></div>;
   }
 
   return (

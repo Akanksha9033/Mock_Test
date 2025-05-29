@@ -11,6 +11,7 @@ import {
   LinearScale,
   BarElement,
 } from "chart.js";
+import LoadingAnimation from "../../LoadingAnimation";
 
 ChartJS.register(
   ArcElement,
@@ -66,7 +67,7 @@ const FullReportPage = ({
   }, [lastSubmittedResultId, resultId]);
 
   if ((lastSubmittedResultId || resultId) && !report) {
-    return <div className="text-center mt-5">Loading Report...</div>;
+    return <div className="text-center mt-5"><LoadingAnimation /></div>;
   }
 
   if ((lastSubmittedResultId || resultId) && report) {

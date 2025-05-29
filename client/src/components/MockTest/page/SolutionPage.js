@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ExamContentLayoutForSolution from "../Layout/ExamContentLayoutForSolution";
+import LoadingAnimation from "../../LoadingAnimation";
 
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
 
@@ -67,7 +68,7 @@ const SolutionPage = () => {
     fetchResult();
   }, [resultId]);
 
-  if (!test || !result) return <p>Loading...</p>;
+  if (!test || !result) return <p><LoadingAnimation /></p>;
 
   return (
     <ExamContentLayoutForSolution

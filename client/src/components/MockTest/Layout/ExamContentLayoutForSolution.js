@@ -355,30 +355,12 @@ const ExamContentLayoutForSolution = ({
                 disabled={currentQuestionIndex === 0}
                 onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
               >Previous</button>
-              {currentQuestionIndex === questions.length - 1 ? (
-                <button
-                  className="btn btn-danger"
-                  onClick={() => {
-                    console.log("✅ Close clicked");
-                    console.log("🧭 test object:", test);
+             {currentQuestionIndex !== questions.length - 1 && (
+              <button onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}>
+                Next
+              </button>
+            )}
 
-                    if (test?._id) {
-                      console.log("🧭 Navigating to test ID:", test._id);
-                      navigate(`/test-overview/${testId}`);
-                    } else {
-                      alert("Test ID not found. Please try again later.");
-                    }
-                  }}
-                >
-                  Close
-                </button>
-              ) : (
-                <button
-                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-                >
-                  Next
-                </button>
-              )}
             </div>
           </div>
  

@@ -128,6 +128,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import LoadingAnimation from "../../LoadingAnimation";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -151,7 +152,7 @@ const ScoreTimeReportPage = () => {
     fetchReport();
   }, [resultId]);
 
-  if (!report) return <div className="text-center mt-5">Loading Report...</div>;
+  if (!report) return <div className="text-center mt-5"><LoadingAnimation /></div>;
 
   const {
     totalMarks,

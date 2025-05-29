@@ -235,6 +235,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import * as XLSX from "xlsx";
+import LoadingAnimation from "../../LoadingAnimation";
 
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
@@ -270,7 +271,7 @@ const CreateMockTest = () => {
     
  
     if (!user) {
-        return <p>Loading...</p>;
+        return <p><LoadingAnimation /></p>;
     }
  
     const handleChange = (e) => {

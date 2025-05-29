@@ -13,8 +13,11 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import "./Accounts.css";
+import LoadingAnimation from "../../LoadingAnimation";
 
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+
+
 
 const Account = () => {
   const [users, setUsers] = useState([]);
@@ -221,7 +224,7 @@ const Account = () => {
 
         <h2 className="mb-4">Newly Created Accounts</h2>
 
-        {loading && <p>Loading accounts...</p>}
+        {loading && <p><LoadingAnimation /></p>}
         {error && <div className="alert alert-danger">{error}</div>}
         {!loading && !error && users.length === 0 && (
           <p className="text-muted">No accounts created yet.</p>
