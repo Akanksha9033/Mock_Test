@@ -44,25 +44,25 @@ app.use(cors())
 // ✅ CORS setup
 
 
-// const allowedOrigins = [
-//   "http://localhost:3000",
-//   "https://mocktest-nine.vercel.app",
-// ];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://mock-test-1nfm.vercel.app",
+];
 
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true, // if using cookies/auth headers
-//   })
-// );
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // if using cookies/auth headers
+  })
+);
 
-// app.use(cors({ origin: "https://mocktest-nine.vercel.app" }));
+app.use(cors({ origin: "https://mock-test-1nfm.vercel.app" }));
 
 
 
