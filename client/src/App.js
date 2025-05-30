@@ -23,6 +23,7 @@ import FullReportPage from "./components/MockTest/page/FullReportPage";
 import QuestionReportPage from "./components/MockTest/page/QuestionReportPage";
 import ScoreTimeReportPage from "./components/MockTest/page/ScoreTimeReportPage";
 import DifficultlyAnalysisReport from "./components/MockTest/page/DifficultyAnalysisReport";
+import HomePage from './components/MockTest/page/HomePage';
 
 function App() {
     return (
@@ -115,6 +116,7 @@ const AppRoutes = () => {
             <Route path="/report/:resultId" element={<QuestionReportPage />} />
             <Route path="/report/:resultId/score-time" element={<ScoreTimeReportPage />} />
             <Route path="/report/:resultId/difficulty-analysis" element={<DifficultlyAnalysisReport />} />
+            <Route path="/" element={<HomePage />} /> {/* Homepage */}
 
 
 
