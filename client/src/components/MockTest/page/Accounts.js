@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef} from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as XLSX from "xlsx";
@@ -27,6 +27,8 @@ const Account = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("name");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const sidebarRef = useRef(null); // ✅ Add this line
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,6 +61,23 @@ const Account = () => {
     };
 
     fetchUsers();
+  }, []);
+
+
+   // ✅ Auto-close sidebar on outside click (for mobile)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        window.innerWidth < 768
+      ) {
+        setIsCollapsed(true);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleDelete = async (userId) => {
@@ -121,78 +140,84 @@ const Account = () => {
   return (
     <div className="d-flex">
       {!isExamPage && (
-        <>
-          {/* Sidebar */}
-          <div
-            className="bg-light border-end p-3 position-fixed d-flex flex-column justify-content-between"
-            style={{
-              width: isCollapsed ? "60px" : "250px",
-              height: "100vh",
-              transition: "width 0.3s ease",
-              zIndex: 1050,
-              overflow: "hidden",
-            }}
-          >
-            <div>
-              {!isCollapsed && <h4 className="mb-4">Admin Panel</h4>}
+  <>
+    {/* Sidebar + Toggle Button in wrapper ref */}
+    <div ref={sidebarRef}>
+      {/* Sidebar */}
+      <div
+        className="bg-light border-end p-3 position-fixed d-flex flex-column justify-content-between"
+        style={{
+          width: isCollapsed ? "60px" : "250px",
+          height: "100vh",
+          transition: "width 0.3s ease",
+          zIndex: 1050,
+          overflow: "hidden",
+        }}
+      >
+        <div>
+          {!isCollapsed && <h4 className="mb-4">Admin Panel</h4>}
 
-              <ul className="list-unstyled sidebar-links w-100">
-                <li className="mb-3 d-flex align-items-center">
-                  <Link to="/admin-dashboard" className="sidebar-link d-flex align-items-center">
-                    <FaTachometerAlt className="me-2" />
-                    {!isCollapsed && "Dashboard"}
-                  </Link>
-                </li>
-                <li className="mb-3 d-flex align-items-center">
-                  <Link to="/mock-tests" className="sidebar-link d-flex align-items-center">
-                    <FaFileAlt className="me-2" />
-                    {!isCollapsed && "Mock Tests"}
-                  </Link>
-                </li>
-                <li className="mb-3 d-flex align-items-center">
-                  <Link to="/profile" className="sidebar-link d-flex align-items-center">
-                    <FaUser className="me-2" />
-                    {!isCollapsed && "Profile"}
-                  </Link>
-                </li>
-                <li className="mb-3 d-flex align-items-center">
-                  <Link to="/accounts" className="sidebar-link d-flex align-items-center">
-                    <FaWallet className="me-2" />
-                    {!isCollapsed && "Accounts"}
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <ul className="list-unstyled sidebar-links w-100">
+            <li className="mb-3 d-flex align-items-center">
+              <Link to="/admin-dashboard" className="sidebar-link d-flex align-items-center">
+                <FaTachometerAlt className="me-2" />
+                {!isCollapsed && "Dashboard"}
+              </Link>
+            </li>
+            <li className="mb-3 d-flex align-items-center">
+              <Link to="/mock-tests" className="sidebar-link d-flex align-items-center">
+                <FaFileAlt className="me-2" />
+                {!isCollapsed && "Mock Tests"}
+              </Link>
+            </li>
+            <li className="mb-3 d-flex align-items-center">
+              <Link to="/profile" className="sidebar-link d-flex align-items-center">
+                <FaUser className="me-2" />
+                {!isCollapsed && "Profile"}
+              </Link>
+            </li>
+            <li className="mb-3 d-flex align-items-center">
+              <Link to="/accounts" className="sidebar-link d-flex align-items-center">
+                <FaWallet className="me-2" />
+                {!isCollapsed && "Accounts"}
+              </Link>
+            </li>
+          </ul>
+        </div>
 
-            {/* Logout Button */}
-            <div
-              className="sidebar-link d-flex align-items-center mb-2"
-              onClick={handleLogout}
-              style={{ cursor: "pointer", padding: "10px 15px", color: "#343a40", fontWeight: "600" }}
-            >
-              <FaSignOutAlt className="me-2" />
-              {!isCollapsed && "Logout"}
-            </div>
-          </div>
+        <div
+          className="sidebar-link d-flex align-items-center mb-2"
+          onClick={handleLogout}
+          style={{ cursor: "pointer", padding: "10px 15px", color: "#343a40", fontWeight: "600" }}
+        >
+          <FaSignOutAlt className="me-2" />
+          {!isCollapsed && "Logout"}
+        </div>
+      </div>
 
-          {/* Toggle Button */}
-          <div
-            className="position-fixed"
-            style={{
-              top: "20px",
-              left: isCollapsed ? "60px" : "250px",
-              zIndex: 1060,
-              cursor: "pointer",
-              transition: "left 0.3s ease",
-            }}
-            onClick={() => setIsCollapsed(!isCollapsed)}
-          >
-            <span style={{ fontSize: "20px", color: "#000" }}>
-              {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
-            </span>
-          </div>
-        </>
-      )}
+      {/* Toggle Button */}
+      <div
+        className="position-fixed"
+        style={{
+          top: "20px",
+          left: isCollapsed ? "60px" : "250px",
+          zIndex: 1060,
+          cursor: "pointer",
+          transition: "left 0.3s ease",
+        }}
+        onClick={(e) => {
+          e.stopPropagation(); // ✅ Prevent triggering outside collapse
+          setIsCollapsed(!isCollapsed);
+        }}
+      >
+        <span style={{ fontSize: "20px", color: "#000" }}>
+          {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
+        </span>
+      </div>
+    </div>
+  </>
+)}
+
 
       {/* Main Content */}
       <div
@@ -293,9 +318,6 @@ const Account = () => {
           </table>
         )}
 
-        <button className="backbtn" onClick={() => navigate(-1)}>
-          ← Back
-        </button>
       </div>
     </div>
   );
