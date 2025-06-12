@@ -27,31 +27,51 @@ const AddUserForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
+  e.preventDefault();
+  const token = localStorage.getItem("token");
+  const selectedRole = formData.role.toLowerCase();
 
-    try {
-      const response = await fetch(`${REACT_APP_API_URL}/api/admin/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+  // Determine if this is SuperAdmin creating an Admin/Teacher/Student
+  const isAdminRole = selectedRole === "admin";
+  const endpoint = isAdminRole
+    ? `${REACT_APP_API_URL}/api/superadmin/create-admin`
+    : `${REACT_APP_API_URL}/api/admin/users`;
 
-      const data = await response.json();
-      if (response.ok) {
-        setMessage("User created successfully!");
-        setTimeout(() => navigate("/admin-dashboard"), 1500);
-      } else {
-        setMessage(data.message || "Failed to create user.");
+  const payload = isAdminRole
+    ? {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: "Admin", // Capitalize for backend
       }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("An error occurred.");
+    : {
+        ...formData,
+        role: selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1),
+      };
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      setMessage("User created successfully!");
+      setTimeout(() => navigate("/admin-dashboard"), 1500);
+    } else {
+      setMessage(data.message || "Failed to create user.");
     }
-  };
+  } catch (error) {
+    console.error("Error:", error);
+    setMessage("An error occurred.");
+  }
+};
+
 
   const handleExcelUpload = async (e) => {
     const file = e.target.files[0];
@@ -159,6 +179,7 @@ const AddUserForm = () => {
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
             <option value="management">Management</option>
+            <option value="admin">Admin</option> {/* ✅ added for superadmin use */}
           </select>
         </div>
 

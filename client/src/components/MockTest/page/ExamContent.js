@@ -768,6 +768,8 @@ import { useLocation } from 'react-router-dom';
 import axios from "axios";
 import ExamContentLayout from "./ExamContentLayout";
 import FullReportPage from "./FullReportPage";
+import BreakAnimation from "../../BreakAnimation";
+import TeaAnimation from "../../TeaAnimation";
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
@@ -1439,6 +1441,7 @@ useEffect(() => {
           setShowBreakModal(false);
           setIsPaused(false);
         }}>Continue</button>
+        <BreakAnimation/>
       </div>
     );
   }
@@ -1458,6 +1461,9 @@ useEffect(() => {
         }}>
           Continue
         </button>
+        <br></br>
+        <TeaAnimation/>
+
       </div>
     );
   }

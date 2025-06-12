@@ -1,105 +1,147 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+ 
+const cardImages = [
+  'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg',
+  'https://images.pexels.com/photos/4145196/pexels-photo-4145196.jpeg',
+  'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
+  'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg',
+  'https://images.pexels.com/photos/5212346/pexels-photo-5212346.jpeg',
+  'https://images.pexels.com/photos/6334095/pexels-photo-6334095.jpeg',
+];
+ 
 const HomePage = () => {
   return (
     <div style={styles.wrapper}>
-      {/* Sign In Button */}
       <Link to="/signin" style={{ textDecoration: 'none' }}>
         <button style={styles.signInBtn}>Sign In</button>
       </Link>
-
+ 
       <div style={styles.overlay}>
         <div style={styles.container}>
-          {/* LEFT CONTENT */}
+          {/* LEFT */}
           <div style={styles.left}>
             <h1 style={styles.heading}>
-              Learn with <span style={styles.brand}>Edzest</span> from anywhere.
+              Learn with <span style={styles.brand}>Edzest</span>
             </h1>
             <p style={styles.subheading}>
-              Master job-ready skills at your own pace through live mock tests, practice sets, and expert mentorship.
+              Build your job-ready AI habit with hands-on tests, practical skills, and expert mentorship.
             </p>
-
-            {/* Buttons */}
-            <div style={styles.buttonGroup}>
-              <Link to="/signin" style={{ textDecoration: 'none' }}>
-                <button style={styles.primaryBtn}>Start Learning Free</button>
-              </Link>
-            </div>
-
-            {/* Features */}
-            <ul style={styles.featureList}>
-              <li>✔️ Courses curated by industry professionals</li>
-              <li>✔️ Hands-on mock tests & live assignments</li>
-              <li>✔️ Personal mentorship & doubt support</li>
+ 
+            <ul style={styles.benefitsList}>
+              <li>✅ Interactive mock tests to measure progress</li>
+              <li>✅ Personalized AI-powered learning plans</li>
+              <li>✅ Expert mentors available 24/7</li>
+              <li>✅ Community forums for peer learning</li>
+              <li>✅ Mobile and desktop friendly platform</li>
             </ul>
+ 
+            <Link to="/signin" style={{ textDecoration: 'none' }}>
+              <button style={styles.primaryBtn}>Start Learning →</button>
+            </Link>
           </div>
-
-          {/* RIGHT IMAGE */}
+ 
+          {/* RIGHT - 3D Carousel */}
           <div style={styles.right}>
-            <img
-              src="/assets/hero-edzest-student.png"
-              alt="Edzest student"
-              style={styles.heroImage}
-            />
-
-            {/* YouTube Icon */}
-            <a href="https://www.youtube.com/@edzest" target="_blank" rel="noopener noreferrer">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
-                alt="YouTube"
-                style={{ ...styles.icon, top: '5%', right: '10%' }}
-              />
-            </a>
-
-            {/* LinkedIn Icon */}
-            <a href="https://www.linkedin.com/company/edzest" target="_blank" rel="noopener noreferrer">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
-                alt="LinkedIn"
-                style={{ ...styles.icon, bottom: '5%', right: '10%' }}
-              />
-            </a>
+            <div className="carousel3d">
+              {cardImages.map((src, index) => (
+                <img
+                  key={index}
+                  src={src}
+                  alt={`card-${index}`}
+                  className="card3d"
+                  style={{
+                    transform: `rotateY(${index * (360 / cardImages.length)}deg) translateZ(500px)`,
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+ 
+      {/* ✨ 3D Carousel Styles */}
+      <style>{`
+        .carousel3d {
+          width: 100%;
+          height: 500px;
+          position: relative;
+          transform-style: preserve-3d;
+          animation: spin 25s linear infinite;
+          transform-origin: center center;
+          perspective: 1200px;
+        }
+ 
+        .card3d {
+          position: absolute;
+          width: 280px;
+          height: 420px;
+          object-fit: cover;
+          border-radius: 20px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+          transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+ 
+        .card3d:hover {
+          transform: scale(1.1) translateZ(60px);
+          z-index: 2;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+        }
+ 
+        @keyframes spin {
+          from {
+            transform: rotateY(0deg);
+          }
+          to {
+            transform: rotateY(360deg);
+          }
+        }
+ 
+        @media (max-width: 768px) {
+          .card3d {
+            width: 200px;
+            height: 300px;
+          }
+ 
+          .carousel3d {
+            height: 400px;
+          }
+        }
+      `}</style>
     </div>
   );
 };
-
+ 
 const styles = {
   wrapper: {
-    backgroundImage: 'url("/assets/hero-bg.jpg")',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    background: 'linear-gradient(120deg, #2f3aa0, #6b8de3)',
     minHeight: '100vh',
     position: 'relative',
     overflow: 'hidden',
+    fontFamily: `'Segoe UI', sans-serif`,
+    color: '#fff',
   },
- overlay: {
-  backgroundColor: 'rgba(255, 255, 255, 0.6)',
-  backdropFilter: 'blur(8px)',
-  width: '100%',
-  height: '100%',
-  padding: '60px 20px',
-  boxSizing: 'border-box',
-},
-
   signInBtn: {
     position: 'absolute',
     top: 20,
     right: 20,
     padding: '10px 20px',
-    backgroundColor: '#4748ac',
-    color: '#fff',
+    backgroundColor: '#fff',
+    color: '#4748ac',
     fontWeight: 'bold',
     border: 'none',
     borderRadius: '25px',
     cursor: 'pointer',
-    zIndex: 2,
+    zIndex: 100,
+  },
+  overlay: {
+    width: '100%',
+    height: '100%',
+    padding: '60px 20px',
+    boxSizing: 'border-box',
   },
   container: {
-    maxWidth: '1200px',
+    maxWidth: '1300px',
     margin: '0 auto',
     display: 'flex',
     flexWrap: 'wrap',
@@ -108,65 +150,50 @@ const styles = {
   },
   left: {
     flex: '1',
-    minWidth: '300px',
-    paddingRight: '20px',
+    minWidth: '320px',
+    paddingRight: '30px',
   },
   heading: {
-    fontSize: '40px',
-    fontWeight: 'bold',
-    color: '#1e1e2f',
+    fontSize: '44px',
+    fontWeight: '800',
+    color: '#fff',
     marginBottom: '20px',
+    lineHeight: '1.2',
   },
   brand: {
-    color: '#4748ac',
+    color: '#ffd700',
   },
   subheading: {
     fontSize: '18px',
-    color: '#555',
-    marginBottom: '30px',
+    color: '#ddd',
+    marginBottom: '25px',
     maxWidth: '500px',
   },
-  buttonGroup: {
-    display: 'flex',
-    gap: '15px',
-    marginBottom: '30px',
-    flexWrap: 'wrap',
+  benefitsList: {
+    marginBottom: '40px',
+    maxWidth: '500px',
+    paddingLeft: '20px',
+    color: '#e1e1f7',
+    fontSize: '16px',
+    lineHeight: '1.6',
   },
   primaryBtn: {
-    backgroundColor: '#4748ac',
-    color: '#fff',
-    padding: '12px 24px',
+    backgroundColor: '#fff',
+    color: '#4748ac',
+    padding: '14px 28px',
     fontSize: '16px',
     border: 'none',
     borderRadius: '30px',
     cursor: 'pointer',
-  },
-  featureList: {
-    listStyle: 'none',
-    padding: 0,
-    color: '#444',
-    fontSize: '16px',
-    lineHeight: '1.8',
+    fontWeight: 'bold',
   },
   right: {
     flex: '1',
-    minWidth: '300px',
+    minWidth: '350px',
+    height: '480px',
+    overflow: 'hidden',
     position: 'relative',
-    textAlign: 'center',
-  },
-  heroImage: {
-    maxWidth: '420px',
-    borderRadius: '20px',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-  },
-  icon: {
-    position: 'absolute',
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    transition: 'transform 0.3s',
-    cursor: 'pointer',
   },
 };
-
+ 
 export default HomePage;

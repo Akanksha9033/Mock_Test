@@ -1,6 +1,8 @@
 // import { useState } from "react";
 
-// const REACT_APP_API_URL = "https://mocktest-l6sr.onrender.com"
+// // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
+// const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+
 
 // const ForgotPassword = () => {
 //   const [email, setEmail] = useState("");
@@ -21,16 +23,16 @@
 
 //       const data = await res.json();
 
-//       // Show message immediately after response
 //       if (res.ok) {
-//         setMessage(data.message);
+//         setMessage(data.message || "Password reset email sent successfully.");
 //       } else {
-//         setMessage(data.message || "Something went wrong");
+//         setMessage(data.message || "Failed to send password reset email.");
 //       }
 //     } catch (error) {
+//       console.error("Forgot password error:", error);
 //       setMessage("Network error. Please try again later.");
 //     } finally {
-//       setLoading(false); // Turn off loading state
+//       setLoading(false);
 //     }
 //   };
 
@@ -58,13 +60,16 @@
 // export default ForgotPassword;
 
 
-import React from 'react';
+
+
+
+
+
 
 import { useState } from "react";
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
-
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -74,7 +79,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(""); // Clear previous message
+    setMessage("");
 
     try {
       const res = await fetch(`${REACT_APP_API_URL}/api/auth/forgot-password`, {
@@ -84,12 +89,7 @@ const ForgotPassword = () => {
       });
 
       const data = await res.json();
-
-      if (res.ok) {
-        setMessage(data.message || "Password reset email sent successfully.");
-      } else {
-        setMessage(data.message || "Failed to send password reset email.");
-      }
+      setMessage(res.ok ? data.message || "Password reset email sent successfully." : data.message || "Failed to send password reset email.");
     } catch (error) {
       console.error("Forgot password error:", error);
       setMessage("Network error. Please try again later.");
@@ -99,7 +99,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5" style={{ maxWidth: "400px" }}>
       <h2>Forgot Password</h2>
       {message && <div className="alert alert-info">{message}</div>}
       <form onSubmit={handleSubmit}>
@@ -111,7 +111,7 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <button type="submit" className="btn btn-primary" disabled={loading}>
+        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
           {loading ? "Sending..." : "Send Reset Link"}
         </button>
       </form>
