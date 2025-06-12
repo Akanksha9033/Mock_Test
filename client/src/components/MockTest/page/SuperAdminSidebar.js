@@ -8,20 +8,28 @@ import {
   FaUserPlus,
   FaSignOutAlt,
   FaBars,
+  FaMoon,
+  FaSun,
 } from "react-icons/fa";
 
 const SuperAdminSidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
+  const [darkMode, setDarkMode] = useState(false);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const wrapperRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
 
   const isExamPage = location.pathname.includes("/exam");
-  const sidebarWidth = 250;
+  const sidebarWidth = screenWidth < 768 ? "80vw" : "250px";
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
   };
 
   useEffect(() => {
@@ -29,18 +37,21 @@ const SuperAdminSidebar = () => {
       if (
         wrapperRef.current &&
         !wrapperRef.current.contains(e.target) &&
-        window.innerWidth < 768
+        screenWidth < 768
       ) {
         setIsSidebarOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [screenWidth]);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSidebarOpen(window.innerWidth >= 768);
+      setScreenWidth(window.innerWidth);
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(true);
+      }
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -52,7 +63,7 @@ const SuperAdminSidebar = () => {
   };
 
   const handleNavigate = (path) => {
-    if (window.innerWidth < 768) setIsSidebarOpen(false);
+    if (screenWidth < 768) setIsSidebarOpen(false);
     navigate(path);
   };
 
@@ -64,7 +75,7 @@ const SuperAdminSidebar = () => {
           className="position-fixed"
           style={{
             top: "20px",
-            left: isSidebarOpen ? `${sidebarWidth + 10}px` : "10px",
+            left: !isSidebarOpen ? "10px" : screenWidth < 768 ? `calc(${sidebarWidth} + 10px)` : "10px",
             zIndex: 1100,
             transition: "left 0.3s ease-in-out",
           }}
@@ -83,21 +94,40 @@ const SuperAdminSidebar = () => {
           />
         </div>
 
+        {/* Mobile Overlay */}
+        {isSidebarOpen && screenWidth < 768 && (
+          <div
+            onClick={() => setIsSidebarOpen(false)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              zIndex: 1049,
+              background: "rgba(0,0,0,0.3)",
+            }}
+          />
+        )}
+
         {/* Sidebar */}
         <div
           ref={wrapperRef}
-          className="bg-light border-end position-fixed d-flex flex-column justify-content-between"
+          className={`${
+            darkMode ? "bg-dark text-white" : "bg-light text-dark"
+          } border-end position-fixed d-flex flex-column justify-content-between`}
           style={{
-            width: `${sidebarWidth}px`,
+            width: sidebarWidth,
             height: "100vh",
             zIndex: 1050,
             transform: isSidebarOpen ? "translateX(0)" : "translateX(-100%)",
             transition: "transform 0.3s ease-in-out",
+            maxWidth: "100vw",
+            overflowX: "hidden",
           }}
         >
           <div>
             <h4 className="p-3 mb-0">SuperAdmin Panel</h4>
-
             <ul className="list-unstyled sidebar-links w-100 px-3 mt-3">
               <li
                 className="mb-3 d-flex align-items-center sidebar-link"
@@ -128,24 +158,34 @@ const SuperAdminSidebar = () => {
             </ul>
           </div>
 
-          {/* Logout */}
-          <div
-            className="sidebar-link d-flex align-items-center mb-3 px-3"
-            onClick={handleLogout}
-            style={{ cursor: "pointer" }}
-          >
-            <FaSignOutAlt className="me-2" />
-            Logout
+          <div className="px-3 mb-3">
+            <div
+              className="sidebar-link d-flex align-items-center mb-3"
+              onClick={toggleDarkMode}
+              style={{ cursor: "pointer" }}
+            >
+              {darkMode ? <FaSun className="me-2" /> : <FaMoon className="me-2" />}
+              {darkMode ? "Light Mode" : "Dark Mode"}
+            </div>
+
+            <div
+              className="sidebar-link d-flex align-items-center"
+              onClick={handleLogout}
+              style={{ cursor: "pointer" }}
+            >
+              <FaSignOutAlt className="me-2" />
+              Logout
+            </div>
           </div>
         </div>
 
-        {/* Styles */}
+        {/* Internal styles */}
         <style>
           {`
             .sidebar-links .sidebar-link {
               display: block;
               padding: 10px 15px;
-              color: #343a40;
+              color: inherit;
               font-weight: 600;
               border-radius: 4px;
               transition: background-color 0.3s ease, color 0.3s ease;
@@ -161,6 +201,9 @@ const SuperAdminSidebar = () => {
             @media (max-width: 768px) {
               .sidebar-links .sidebar-link {
                 font-size: 14px;
+              }
+              h4 {
+                font-size: 18px !important;
               }
             }
           `}

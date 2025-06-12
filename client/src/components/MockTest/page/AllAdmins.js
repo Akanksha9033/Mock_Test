@@ -30,35 +30,50 @@ const AllAdmins = () => {
   }, [user]);
 
   return (
-    <div className="d-flex">
+    <div className="d-flex position-relative">
       <SuperAdminSidebar />
-      <div className="flex-grow-1 p-4">
-        <h2>All Admins</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
-        <table className="table table-bordered mt-3">
-          <thead className="table-light">
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.length === 0 ? (
-              <tr>
-                <td colSpan="3" className="text-center">No Admins Found</td>
-              </tr>
-            ) : (
-              admins.map((admin, index) => (
-                <tr key={admin._id}>
-                  <td>{index + 1}</td>
-                  <td>{admin.name}</td>
-                  <td>{admin.email}</td>
+
+      <div
+        className="flex-grow-1 p-4"
+        style={{
+          backgroundColor: "#f5f6fa",
+          minHeight: "100vh",
+          marginLeft: window.innerWidth >= 768 ? "240px" : "0",
+          transition: "margin-left 0.3s ease-in-out",
+        }}
+      >
+        <div className="bg-white p-4 rounded shadow">
+          <h2>All Admins</h2>
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          <div className="table-responsive mt-3">
+            <table className="table table-bordered">
+              <thead className="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {admins.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="text-center">No Admins Found</td>
+                  </tr>
+                ) : (
+                  admins.map((admin, index) => (
+                    <tr key={admin._id}>
+                      <td>{index + 1}</td>
+                      <td>{admin.name}</td>
+                      <td>{admin.email}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
       </div>
     </div>
   );
