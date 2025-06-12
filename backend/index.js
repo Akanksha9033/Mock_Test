@@ -479,7 +479,8 @@ const app = express();
 app.use(helmet());
 app.use("/api/payment", require("./routes/paymentRoutes"));
 
-const allowedOrigins = ["http://localhost:3000", "https://hoppscotch.io"];
+const allowedOrigins = ["http://localhost:3000", "https://hoppscotch.io",
+  "https://www.smartlearning.co.in"];
 app.use(
   cors({
     origin: function (origin, callback) {
