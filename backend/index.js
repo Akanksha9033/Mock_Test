@@ -68,7 +68,8 @@ app.post("/api/auth/forgot-password", async (req, res) => {
 
     await PasswordReset.create({ email, token: tokenHash, expiresAt });
 
-    const resetLink = `http://localhost:3000/reset-password/${rawToken}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`;
+
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
