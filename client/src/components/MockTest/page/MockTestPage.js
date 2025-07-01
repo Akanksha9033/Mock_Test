@@ -153,11 +153,11 @@
 //             {user.role?.toLowerCase() === "admin" && (
 //               <li className="mb-3 d-flex align-items-center">
 //                 <Link
-//                   to="/accounts"
+//                   to="/Users"
 //                   className="sidebar-link d-flex align-items-center"
 //                 >
 //                   <FaWallet className="me-2" />
-//                   {!isCollapsed && "Accounts"}
+//                   {!isCollapsed && "Users"}
 //                 </Link>
 //               </li>
 //             )}
@@ -302,7 +302,7 @@
 //         navigate("/create-mock-test");
 //       }}
 //     >
-//       Create Mock 
+//       Create Mock
 //     </button>
 //   )}
 
@@ -322,7 +322,7 @@
 //                   {test.wallpaper && (
 //                     <div
 //                       style={{
-//                         cursor : 
+//                         cursor :
 //                           user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'teacher' || (user?.role?.toLowerCase() === 'student' && test.status === 'active') ? 'pointer' : 'not-allowed'
 //                       }}
 //                       onClick={() => {
@@ -351,7 +351,7 @@
 //                         }}
 //                       />
 //                     </div>
-                    
+
 //                   )}
 //                   <div className="card-body">
 //                     <h5 className="card-title">{test.title}</h5>
@@ -456,8 +456,6 @@
 // };
 
 // export default MockTests;
-
-
 
 // import { useState, useEffect, useContext, useRef } from "react";
 // import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -618,9 +616,9 @@
 //             </li>
 //             {user.role?.toLowerCase() === "admin" && (
 //               <li className="mb-3 d-flex align-items-center">
-//                 <Link to="/accounts" className="sidebar-link d-flex align-items-center">
+//                 <Link to="/Users" className="sidebar-link d-flex align-items-center">
 //                   <FaWallet className="me-2" />
-//                   {!isCollapsed && "Accounts"}
+//                   {!isCollapsed && "Users"}
 //                 </Link>
 //               </li>
 //             )}
@@ -903,10 +901,6 @@
 
 // export default MockTests;
 
-
-
-
-
 import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -921,7 +915,8 @@ import {
   FaUser,
   FaWallet,
   FaSignOutAlt,
-  FaBars,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../MockTestPage.css";
@@ -956,15 +951,18 @@ const handleBuyTest = async (testId, amount, userId) => {
     description: "Access for 1 Year",
     order_id: order.id,
     handler: async function (response) {
-      const verifyRes = await fetch("http://localhost:5000/api/payment/verify-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          testId,
-          ...response,
-        }),
-      });
+      const verifyRes = await fetch(
+        "http://localhost:5000/api/payment/verify-payment",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            testId,
+            ...response,
+          }),
+        }
+      );
 
       const result = await verifyRes.json();
       if (result.success) {
@@ -985,9 +983,8 @@ const handleBuyTest = async (testId, amount, userId) => {
   rzp.open();
 };
 
- 
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
- 
+
 const MockTests = () => {
   const { user } = useContext(AuthContext);
   const [mockTestsData, setMockTestsData] = useState([]);
@@ -996,17 +993,21 @@ const MockTests = () => {
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
   const [loading, setLoading] = useState(true);
- 
+
   const navigate = useNavigate();
   const location = useLocation();
   const isExamPage = location.pathname.includes("/exam");
- 
+
   const sidebarRef = useRef(null);
- 
+
   useEffect(() => {
     fetchMockTests();
   }, [location.pathname]);
- 
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -1022,7 +1023,7 @@ const MockTests = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
- 
+
   useEffect(() => {
     const handleResize = () => {
       setIsSidebarOpen(window.innerWidth >= 768);
@@ -1030,46 +1031,40 @@ const MockTests = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
- const fetchMockTests = async () => {
-  setLoading(true);
-  try {
-    const token = localStorage.getItem("token");
-    let url;
+  const fetchMockTests = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      let url;
 
-if (user.role?.toLowerCase() === "student") {
-  url = `${REACT_APP_API_URL}/api/admin/student-visible-tests`;
-} else if (user.role?.toLowerCase() === "teacher") {
-  url = `${REACT_APP_API_URL}/api/admin/teacher-visible-tests`; // ✅ newly added route
-} else {
-  url = `${REACT_APP_API_URL}/api/admin/mock-tests`; // for Admins
-}
+      if (user.role?.toLowerCase() === "student") {
+        url = `${REACT_APP_API_URL}/api/admin/student-visible-tests`;
+      } else if (user.role?.toLowerCase() === "teacher") {
+        url = `${REACT_APP_API_URL}/api/admin/teacher-visible-tests`; // ✅ newly added route
+      } else {
+        url = `${REACT_APP_API_URL}/api/admin/mock-tests`; // for Admins
+      }
 
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setMockTestsData(data);
-    } else {
-      console.error("Failed to fetch mock tests");
+      if (response.ok) {
+        const data = await response.json();
+        setMockTestsData(data);
+      } else {
+        console.error("Failed to fetch mock tests");
+      }
+    } catch (error) {
+      console.error("Error fetching mock tests:", error);
     }
-  } catch (error) {
-    console.error("Error fetching mock tests:", error);
-  }
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
-
-
- 
   const handleToggleStatus = async (testId, currentStatus) => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     try {
@@ -1086,38 +1081,46 @@ if (user.role?.toLowerCase() === "student") {
       console.error("Error updating test status:", err);
     }
   };
- 
+
   const handleDeleteTest = async (testId) => {
-    const confirmDelete = window.confirm("Do you want to delete this test permanently?");
+    const confirmDelete = window.confirm(
+      "Do you want to delete this test permanently?"
+    );
     if (!confirmDelete) return;
- 
+
     try {
-      const res = await fetch(`${REACT_APP_API_URL}/api/admin/mock-tests/${testId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${REACT_APP_API_URL}/api/admin/mock-tests/${testId}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (res.ok) fetchMockTests();
     } catch (err) {
       console.error("Error deleting test:", err);
     }
   };
- 
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
   };
- 
-  const filteredTests = mockTestsData.filter((test) => {
-    const matchesSearch = (test?.title || "")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all"
-        ? true
-        : (test?.status || "").toLowerCase() === statusFilter;
- 
-    return matchesSearch && matchesStatus;
-  });
- 
+
+  const filteredTests = Array.isArray(mockTestsData)
+    ? mockTestsData.filter((test) => {
+        const matchesSearch = (test?.title || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+
+        const matchesStatus =
+          statusFilter === "all"
+            ? true
+            : (test?.status || "").toLowerCase() === statusFilter;
+
+        return matchesSearch && matchesStatus;
+      })
+    : [];
+
   const renderSidebar = () => (
     <div
       ref={sidebarRef}
@@ -1134,24 +1137,36 @@ if (user.role?.toLowerCase() === "student") {
         <h4 className="mb-4">{user.role} Panel</h4>
         <ul className="list-unstyled sidebar-links w-100">
           <li className="mb-3 d-flex align-items-center">
-            <Link to={`/${user.role.toLowerCase()}-dashboard`} className="sidebar-link d-flex align-items-center">
+            <Link
+              to={`/${user.role.toLowerCase()}-dashboard`}
+              className="sidebar-link d-flex align-items-center"
+            >
               <FaTachometerAlt className="me-2" /> Dashboard
             </Link>
           </li>
           <li className="mb-3 d-flex align-items-center">
-            <Link to="/mock-tests" className="sidebar-link d-flex align-items-center">
+            <Link
+              to="/mock-tests"
+              className="sidebar-link d-flex align-items-center"
+            >
               <FaFileAlt className="me-2" /> Mock Tests
             </Link>
           </li>
           <li className="mb-3 d-flex align-items-center">
-            <Link to="/profile" className="sidebar-link d-flex align-items-center">
+            <Link
+              to="/profile"
+              className="sidebar-link d-flex align-items-center"
+            >
               <FaUser className="me-2" /> Profile
             </Link>
           </li>
           {user.role?.toLowerCase() === "admin" && (
             <li className="mb-3 d-flex align-items-center">
-              <Link to="/accounts" className="sidebar-link d-flex align-items-center">
-                <FaWallet className="me-2" /> Accounts
+              <Link
+                to="/Users"
+                className="sidebar-link d-flex align-items-center"
+              >
+                <FaWallet className="me-2" /> Users
               </Link>
             </li>
           )}
@@ -1174,7 +1189,7 @@ if (user.role?.toLowerCase() === "student") {
   return (
     <div className="d-flex">
       {!isExamPage && renderSidebar()}
- 
+
       {!isExamPage && (
         <div
           className="position-fixed"
@@ -1183,28 +1198,58 @@ if (user.role?.toLowerCase() === "student") {
             left: isSidebarOpen ? "260px" : "10px",
             zIndex: 1100,
             transition: "left 0.3s ease",
-            cursor: "pointer",
           }}
-          onClick={() => setIsSidebarOpen((prev) => !prev)}
         >
-          <FaBars
-            style={{
-              fontSize: "26px",
-              color: "#333",
-              backgroundColor: "#fff",
-              padding: "6px",
-              borderRadius: "8px",
-              boxShadow: "0 0 6px rgba(0,0,0,0.2)",
-            }}
-          />
+          {isSidebarOpen ? (
+            <FaChevronLeft
+              onClick={toggleSidebar}
+              style={{
+                fontSize: "28px",
+                color: "#333",
+                backgroundColor: "#fff",
+                padding: "6px",
+                borderRadius: "50%",
+                boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+                cursor: "pointer",
+                marginTop: "40px",
+              }}
+            />
+          ) : (
+            <FaChevronRight
+              onClick={toggleSidebar}
+              style={{
+                fontSize: "28px",
+                color: "#333",
+                backgroundColor: "#fff",
+                padding: "6px",
+                borderRadius: "50%",
+                boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+                cursor: "pointer",
+                marginTop: "40px",
+              }}
+            />
+          )}
         </div>
       )}
- 
+
       <div
         className="container mt-4"
         style={{
-          marginLeft: !isExamPage ? (isSidebarOpen ? "250px" : "0px") : "0px",
-          transition: "margin-left 0.3s ease",
+          marginLeft:
+            !isExamPage && window.innerWidth >= 768
+              ? isSidebarOpen
+                ? "250px"
+                : "80px"
+              : "0px",
+          transition: "all 0.3s ease",
+          filter:
+            !isExamPage && isSidebarOpen && window.innerWidth < 768
+              ? "blur(4px)"
+              : "none",
+          pointerEvents:
+            !isExamPage && isSidebarOpen && window.innerWidth < 768
+              ? "none"
+              : "auto",
         }}
       >
         <style>
@@ -1247,7 +1292,7 @@ if (user.role?.toLowerCase() === "student") {
             }
           `}
         </style>
- 
+
         <h1
           style={{
             textAlign: "center",
@@ -1259,7 +1304,7 @@ if (user.role?.toLowerCase() === "student") {
         >
           Available Mock Tests
         </h1>
- 
+
         <div className="d-flex align-items-center gap-2 mb-3">
           <div className="input-group" style={{ maxWidth: "300px" }}>
             <span className="input-group-text">
@@ -1273,7 +1318,7 @@ if (user.role?.toLowerCase() === "student") {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
- 
+
           <div className="position-relative">
             <button
               type="button"
@@ -1283,15 +1328,37 @@ if (user.role?.toLowerCase() === "student") {
               <FaFilter className="me-1" /> Filter
             </button>
             {showFilterOptions && (
-              <div className="position-absolute bg-white border rounded p-2 mt-2 shadow" style={{ zIndex: 10 }}>
-                <button type="button" className="dropdown-item" onClick={() => setStatusFilter("all")}>All</button>
-                <button type="button" className="dropdown-item" onClick={() => setStatusFilter("active")}>Active</button>
-                <button type="button" className="dropdown-item" onClick={() => setStatusFilter("inactive")}>Inactive</button>
+              <div
+                className="position-absolute bg-white border rounded p-2 mt-2 shadow"
+                style={{ zIndex: 10 }}
+              >
+                <button
+                  type="button"
+                  className="dropdown-item"
+                  onClick={() => setStatusFilter("all")}
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  className="dropdown-item"
+                  onClick={() => setStatusFilter("active")}
+                >
+                  Active
+                </button>
+                <button
+                  type="button"
+                  className="dropdown-item"
+                  onClick={() => setStatusFilter("inactive")}
+                >
+                  Inactive
+                </button>
               </div>
             )}
           </div>
- 
-          {(user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "teacher") && (
+
+          {(user?.role?.toLowerCase() === "admin" ||
+            user?.role?.toLowerCase() === "teacher") && (
             <button
               type="button"
               className="btn btn-success ms-auto"
@@ -1320,14 +1387,21 @@ if (user.role?.toLowerCase() === "student") {
                         cursor:
                           user?.role?.toLowerCase() === "admin" ||
                           user?.role?.toLowerCase() === "teacher" ||
-                          (user?.role?.toLowerCase() === "student" && test.status === "active")
+                          (user?.role?.toLowerCase() === "student" &&
+                            test.status === "active")
                             ? "pointer"
                             : "not-allowed",
                       }}
                       onClick={() => {
-                        if (test.status === "active" && user?.role?.toLowerCase() === "student") {
+                        if (
+                          test.status === "active" &&
+                          user?.role?.toLowerCase() === "student"
+                        ) {
                           navigate(`/test-overview/${test._id}`);
-                        } else if (user?.role?.toLowerCase() === "admin" || user?.role?.toLowerCase() === "teacher") {
+                        } else if (
+                          user?.role?.toLowerCase() === "admin" ||
+                          user?.role?.toLowerCase() === "teacher"
+                        ) {
                           navigate(`/exam/${test._id}`);
                         }
                       }}
@@ -1349,7 +1423,7 @@ if (user.role?.toLowerCase() === "student") {
                     <p className="card-text">
                       {test.isFree ? "Free" : `Price: ₹${test.price}`}
                     </p>
-                   
+
                     <p>
                       Status:{" "}
                       <span
@@ -1357,8 +1431,9 @@ if (user.role?.toLowerCase() === "student") {
                           color: "white",
                           padding: "3px 8px",
                           borderRadius: "5px",
- 
-                          backgroundColor: test.status === "active" ? "green" : "red",
+
+                          backgroundColor:
+                            test.status === "active" ? "green" : "red",
                         }}
                       >
                         {test.status === "active" ? "Active" : "Inactive"}
@@ -1366,26 +1441,36 @@ if (user.role?.toLowerCase() === "student") {
                     </p>
                     {test.duration && (
                       <div className="test-time">
-                        Time: {test.duration} {test.duration > 1 ? "minutes" : "minute"}
+                        Time: {test.duration}{" "}
+                        {test.duration > 1 ? "minutes" : "minute"}
                       </div>
                     )}
- 
-                    {user?.role?.toLowerCase() === "student" && test.status === "active" && (
-  <>
-    <button
-      className="btn btn-success me-2"
-      onClick={() => handleBuyTest(test._id, test.price || 299, user._id)}
-    >
-      Buy Now ₹{test.price || 299}
-    </button>
-    <button
-      className="btn btn-primary"
-      onClick={() => navigate(`/test-overview/${test._id}`)}
-    >
-      Start Test
-    </button>
-  </>
-)}
+
+                    {user?.role?.toLowerCase() === "student" &&
+                      test.status === "active" && (
+                        <>
+                          <button
+                            className="btn btn-success me-2"
+                            onClick={() =>
+                              handleBuyTest(
+                                test._id,
+                                test.price || 299,
+                                user._id
+                              )
+                            }
+                          >
+                            Buy Now ₹{test.price || 299}
+                          </button>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() =>
+                              navigate(`/test-overview/${test._id}`)
+                            }
+                          >
+                            Start Test
+                          </button>
+                        </>
+                      )}
 
                     {user?.role?.toLowerCase() === "admin" && (
                       <>
@@ -1399,9 +1484,15 @@ if (user.role?.toLowerCase() === "student") {
                         <button
                           type="button"
                           className="btn btn-outline-secondary ms-2"
-                          onClick={() => handleToggleStatus(test._id, test.status)}
+                          onClick={() =>
+                            handleToggleStatus(test._id, test.status)
+                          }
                         >
-                          {test.status === "active" ? <FaEye /> : <FaEyeSlash />}
+                          {test.status === "active" ? (
+                            <FaEye />
+                          ) : (
+                            <FaEyeSlash />
+                          )}
                         </button>
                         <button
                           type="button"
@@ -1412,13 +1503,15 @@ if (user.role?.toLowerCase() === "student") {
                         </button>
                       </>
                     )}
- 
+
                     {user?.role?.toLowerCase() === "teacher" && (
                       <>
                         <button
                           type="button"
                           className="btn btn-info me-2"
-                          onClick={() => navigate(`/exam/${test._id}?mode=view`)}
+                          onClick={() =>
+                            navigate(`/exam/${test._id}?mode=view`)
+                          }
                         >
                           View Test
                         </button>
@@ -1430,7 +1523,11 @@ if (user.role?.toLowerCase() === "student") {
                             handleToggleStatus(test._id, test.status);
                           }}
                         >
-                          {test.status === "active" ? <FaEye /> : <FaEyeSlash />}
+                          {test.status === "active" ? (
+                            <FaEye />
+                          ) : (
+                            <FaEyeSlash />
+                          )}
                         </button>
                       </>
                     )}
@@ -1440,9 +1537,9 @@ if (user.role?.toLowerCase() === "student") {
             ))}
           </div>
         )}
-      </div>fetch
+      </div>
     </div>
   );
 };
- 
+
 export default MockTests;

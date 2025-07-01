@@ -12,6 +12,8 @@ import {
   BarElement,
 } from "chart.js";
 import LoadingAnimation from "../../LoadingAnimation";
+import WeakTopicsSection from "./WeakTopicsSection";
+import BackButton from "./BackButton";
 
 ChartJS.register(
   ArcElement,
@@ -22,7 +24,7 @@ ChartJS.register(
   BarElement
 );
 
-// const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
+
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
 
 const FullReportPage = ({
@@ -52,11 +54,16 @@ const FullReportPage = ({
     const fetchReport = async () => {
       const idToUse = lastSubmittedResultId || resultId;
       if (!idToUse) return;
-
+const token = localStorage.getItem("token");
       try {
-        const res = await axios.get(
-          `${REACT_APP_API_URL}/api/results/${idToUse}`
-        );
+       const res = await axios.get(
+      `${REACT_APP_API_URL}/api/results/${idToUse}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}` // ✅ Add token to header
+        }
+      }
+    );
         setReport(res.data);
       } catch (err) {
         console.error("❌ Failed to load full report:", err);
@@ -94,6 +101,8 @@ const FullReportPage = ({
       .reduce((sum, [, sec]) => sum + sec, 0);
 
     return (
+      <>
+        <BackButton/>
       <div className="container my-5">
         <h2 className="fw-bold text-center text-primary mb-4">{testTitle}</h2>
 
@@ -359,17 +368,7 @@ const FullReportPage = ({
         {/* 🏆 Leaderboard Section */}
         <div className="mt-5">
           <h4 className="fw-bold mb-4 text-primary px-3 d-flex justify-content-between align-items-center">
-            Where Do You Stand?
-            <button
-              className="btn btn-outline-secondary btn-sm"
-              onClick={() =>
-                navigate(
-                  `/report/${lastSubmittedResultId || resultId}/leaderboard`
-                )
-              }
-            >
-              Full Leaderboard →
-            </button>
+            Where Do You Stand?            
           </h4>
 
           {/* Top 3 Cards */}
@@ -414,7 +413,7 @@ const FullReportPage = ({
             <table className="table table-bordered bg-white shadow-sm rounded">
               <thead className="bg-light">
                 <tr>
-                  <th>#</th>
+                  <th>No.</th>
                   <th>Learner Name</th>
                   <th className="text-end">Score</th>
                 </tr>
@@ -520,13 +519,13 @@ const FullReportPage = ({
                 <div style={{ height: 200, width: 200, margin: "0 auto" }}>
                   <Pie
                     data={{
-                      labels: ["Easy", "Medium", "Intense"],
+                      labels: ["Easy", "Medium", "Difficult"],
                       datasets: [
                         {
                           data: [
                             report.difficultyStats?.Easy || 0,
                             report.difficultyStats?.Medium || 0,
-                            report.difficultyStats?.Intense || 0,
+                            report.difficultyStats?.Difficult || 0,
                           ],
                           backgroundColor: ["#28a745", "#ffc107", "#dc3545"],
                           borderWidth: 1,
@@ -562,9 +561,9 @@ const FullReportPage = ({
                     %
                   </li>
                   <li>
-                    <span className="text-danger">On Intense Questions:</span>{" "}
+                    <span className="text-danger">On Difficult Questions:</span>{" "}
                     {Math.round(
-                      ((report.difficultyStats?.Intense || 0) / totalMarks) *
+                      ((report.difficultyStats?.Difficult || 0) / totalMarks) *
                         100
                     )}
                     %
@@ -590,14 +589,14 @@ const FullReportPage = ({
                 <div style={{ height: "350px", width: "100%" }}>
                   <Bar
                     data={{
-                      labels: ["Easy", "Medium", "Intense"],
+                      labels: ["Easy", "Medium", "Difficult"],
                       datasets: [
                         {
                           label: "Marks Scored",
                           data: [
                             report.difficultyScore?.Easy || 0,
                             report.difficultyScore?.Medium || 0,
-                            report.difficultyScore?.Intense || 0,
+                            report.difficultyScore?.Difficult || 0,
                           ],
                           backgroundColor: ["#28a745", "#ffc107", "#dc3545"],
                           barThickness: 25,
@@ -627,11 +626,13 @@ const FullReportPage = ({
                     🟨 Medium {report.difficultyScore?.Medium || 0}
                   </span>
                   <span className="text-danger">
-                    🟥 Intense {report.difficultyScore?.Intense || 0}
+                    🟥 Difficult {report.difficultyScore?.Difficult || 0}
                   </span>
                 </div>
               </div>
             </div>
+
+            
           </div>
 
           {/* Summary */}
@@ -641,11 +642,16 @@ const FullReportPage = ({
             level questions, scored{" "}
             <strong>{report.difficultyScore?.Medium || 0} marks</strong> with
             medium level questions, and scored{" "}
-            <strong>{report.difficultyScore?.Intense || 0} marks</strong> with
-            intense questions.
+            <strong>{report.difficultyScore?.Difficult || 0} marks</strong> with
+            difficult questions.
           </p>
         </div>
+
+            <div>
+              <WeakTopicsSection/>
+            </div>
       </div>
+      </>
     );
   }
 

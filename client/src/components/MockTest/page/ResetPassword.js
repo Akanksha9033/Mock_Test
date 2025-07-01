@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";  // ✅ useParams instead of useLocation
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
 
 const ResetPassword = () => {
-  const location = useLocation();
+  const { token } = useParams();  // ✅ get token from path
   const navigate = useNavigate();
-  const token = new URLSearchParams(location.search).get("token");
 
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");

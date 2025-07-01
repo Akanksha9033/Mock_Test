@@ -7,7 +7,7 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Check token and user from localStorage when app loads
+    // Check token and user from localStorage when app loads    
     useEffect(() => {
         const token = localStorage.getItem("token");
         const storedUser = localStorage.getItem("user");
@@ -34,6 +34,9 @@ const AuthProvider = ({ children }) => {
                             id: decodedToken.id,
                             name: decodedToken.name,
                             role: role,
+                            instituteId: decodedToken.instituteId || null,
+                            instituteName: decodedToken.instituteName || null,
+                            createdBy: decodedToken.createdBy || null,
                         };
                         console.log("AuthProvider.js: Setting new user:", newUser);
                         setUser(newUser); // Set the user from the decoded token
@@ -59,6 +62,9 @@ const AuthProvider = ({ children }) => {
                 id: decodedToken.id,
                 name: decodedToken.name,
                 role: role,
+                instituteId: decodedToken.instituteId || null,
+                instituteName: decodedToken.instituteName || null,
+                createdBy: decodedToken.createdBy || null
             };
             console.log("AuthProvider.js: Login - Decoded user:", userData);
 

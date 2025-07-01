@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import LoadingAnimation from "../../LoadingAnimation";
+import BackButton from "./BackButton";
 
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
 
@@ -97,6 +98,8 @@ const DifficultlyAnalysisReport = () => {
   );
 
   return (
+    <>
+    <BackButton/>
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3 className="fw-bold">Difficulty Level Analysis</h3>
@@ -124,6 +127,7 @@ const DifficultlyAnalysisReport = () => {
       {renderDifficultyBlock("Medium", difficultyStats.Medium)}
       {renderDifficultyBlock("Intense", difficultyStats.Intense)}
     </div>
+    </>
   );
 };
 

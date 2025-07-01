@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import { Button } from "react-bootstrap";
 
@@ -20,13 +18,18 @@ const getStatusColor = (status) => {
   }
 };
 
-const generateQuestionStatus = (questions, answers, markedForReview) => {
+const generateQuestionStatus = (questions, answers, markedForReview, visitedQuestions = {}) => {
   const statusMap = {};
-
   questions.forEach((q, idx) => {
-    const id = q._id || idx;
-    const hasAnswer = answers[id] !== undefined && answers[id] !== null;
-    const isMarked = markedForReview[id];
+    const id = q._id?.toString() || q.questionNumber?.toString() || idx.toString();
+
+    if (!visitedQuestions[id]) {
+      statusMap[id] = "notVisited";
+      return;
+    }
+
+    const hasAnswer = answers?.[id] !== undefined && answers?.[id] !== null;
+    const isMarked = markedForReview?.[id];
 
     if (hasAnswer && isMarked) {
       statusMap[id] = "answeredMarked";
@@ -38,7 +41,6 @@ const generateQuestionStatus = (questions, answers, markedForReview) => {
       statusMap[id] = "unanswered";
     }
   });
-
   return statusMap;
 };
 
@@ -51,41 +53,37 @@ const SidebarNavigator = ({
   onQuestionSelect,
   currentIndex,
   setCurrentQuestionIndex,
+  visitedQuestions
 }) => {
   const allQuestions = questions || (test && test.questions) || [];
 
-  if (!allQuestions.length) {
-    return <div>Loading questions...</div>;
-  }
+  if (!allQuestions.length) return <div>Loading questions...</div>;
 
-  const finalStatus =
-    questionStatus ||
-    generateQuestionStatus(allQuestions, answers, markedForReview);
+  const isEmpty = (obj) => !obj || Object.keys(obj).length === 0;
+
+const finalStatus = !isEmpty(questionStatus)
+  ? questionStatus
+  : generateQuestionStatus(allQuestions, answers, markedForReview, visitedQuestions);
+
 
   const handleClick = (idx) => {
-    if (onQuestionSelect) {
-      onQuestionSelect(idx);
-    } else if (setCurrentQuestionIndex) {
-      setCurrentQuestionIndex(idx);
-    }
+    if (onQuestionSelect) onQuestionSelect(idx);
+    else if (setCurrentQuestionIndex) setCurrentQuestionIndex(idx);
   };
 
   return (
-    <div
-      className="p-3 bg-white rounded shadow-sm"
-      style={{ maxHeight: "100vh", overflowY: "auto" }}
-    >
+    <div className="p-3 bg-white rounded shadow-sm" style={{ maxHeight: "100vh", overflowY: "auto" }}>
       <h6 className="fw-bold mb-3">Question Navigator</h6>
-
-      <div
-        className="d-flex flex-wrap gap-2 mb-3"
-        style={{ maxHeight: 300, overflowY: "auto" }}
-      >
+      <div className="d-flex flex-wrap gap-2 mb-3" style={{ maxHeight: 300, overflowY: "auto" }}>
         {allQuestions.map((q, idx) => {
-          const id = q._id || idx;
+          const id = q._id?.toString() || q.questionNumber?.toString() || idx.toString();
           const status = finalStatus?.[id] || "notVisited";
-          const bg = getStatusColor(status);
-          const isGradient = bg.includes("linear");
+          const bg = idx === currentIndex
+  ? "#4748ac"
+  : getStatusColor(status);
+const isGradient = bg.includes?.("linear");
+
+          
 
           return (
             <div
@@ -98,7 +96,7 @@ const SidebarNavigator = ({
                 borderRadius: "50%",
                 backgroundColor: isGradient ? undefined : bg,
                 backgroundImage: isGradient ? bg : undefined,
-                color: bg === "#E0E0E0" ? "#000" : "#fff",
+                color: status === "notVisited" || idx === currentIndex ? "#000" : "#fff",
                 border: "1px solid #ccc",
                 cursor: "pointer",
                 fontWeight: "bold",
@@ -117,13 +115,10 @@ const SidebarNavigator = ({
             ["#8BC34A", "ANSWERED"],
             ["#E53935", "NOT ANSWERED"],
             ["#673AB7", "MARKED FOR REVIEW"],
-            [
-              "linear-gradient(#673AB7 50%, #8BC34A 50%)",
-              "ANSWERED & MARKED FOR REVIEW",
-            ],
+            ["linear-gradient(#673AB7 50%, #8BC34A 50%)", "ANSWERED & MARKED FOR REVIEW"],
+            ["#2196F3", "CURRENTLY ATTEMPTING"]
           ].map(([color, label], idx) => {
-            const isGradient = color.includes("linear");
-
+            const isGradient = color.includes?.("linear");
             return (
               <div key={idx} className="d-flex align-items-center">
                 <div
@@ -151,9 +146,7 @@ const SidebarNavigator = ({
             fontWeight: "bold",
             width: "100%",
           }}
-          onClick={() =>
-            window.dispatchEvent(new CustomEvent("trigger-submit-modal"))
-          }
+          onClick={() => window.dispatchEvent(new CustomEvent("trigger-submit-modal"))}
         >
           SUBMIT
         </Button>
@@ -163,5 +156,3 @@ const SidebarNavigator = ({
 };
 
 export default SidebarNavigator;
-
-

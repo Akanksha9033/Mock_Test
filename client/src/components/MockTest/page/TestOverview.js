@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../context/AuthContext';
 import LoadingAnimation from '../../LoadingAnimation'
+import BackButton from './BackButton';
 
 // const REACT_APP_API_URL = "https://mocktest-ljru.onrender.com";
 const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
@@ -37,7 +38,15 @@ const TestOverview = () => {
         return;
       }
 
-      const attemptRes = await fetch(`${REACT_APP_API_URL}/api/user/dashboard/${user.id}`);
+      const token = localStorage.getItem("token");
+
+const attemptRes = await fetch(`${REACT_APP_API_URL}/api/user/dashboard/${user.id}`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+
       const result = await attemptRes.json();
 
       let allAttempts = [];
@@ -84,11 +93,16 @@ const totalMarks = test?.questions?.reduce((sum, q) => sum + (q.marks || 1), 0);
               onClick={async () => {
                 try {
                   toast.dismiss(toastId); // dismiss current prompt
-                  const res = await fetch(`${REACT_APP_API_URL}/api/userTestData/clear-attempts`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: user?.id, testId })
-                  });
+                  const token = localStorage.getItem("token"); // ✅ GET TOKEN
+
+                const res = await fetch(`${REACT_APP_API_URL}/api/userTestData/clear-attempts`, {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // ✅ ADD TOKEN HERE
+                  },
+                  body: JSON.stringify({ userId: user?.id, testId })
+                });
   
                   const result = await res.json();
                   if (res.ok) {
@@ -121,11 +135,16 @@ const totalMarks = test?.questions?.reduce((sum, q) => sum + (q.marks || 1), 0);
 
   const handleRetakeNewAttempt = async () => {
     try {
-      await fetch(`${REACT_APP_API_URL}/api/userTestData/start-attempt`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, testId }),
-      });
+     const token = localStorage.getItem("token");
+
+await fetch(`${REACT_APP_API_URL}/api/userTestData/start-attempt`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}` // ✅ Added token
+  },
+  body: JSON.stringify({ userId: user?.id, testId }),
+});
 
       localStorage.removeItem(`timer-${testId}`);
       localStorage.removeItem(`pause-${testId}`);
@@ -144,6 +163,9 @@ const totalMarks = test?.questions?.reduce((sum, q) => sum + (q.marks || 1), 0);
   }
 
   return (
+    <>
+
+      <BackButton/>
     <div className="container mt-4">
       <div className="row mb-4">
         <div className="col-md-8">
@@ -278,6 +300,7 @@ const totalMarks = test?.questions?.reduce((sum, q) => sum + (q.marks || 1), 0);
         </div>
       </div>
     </div>
+    </>
   );
 };
 

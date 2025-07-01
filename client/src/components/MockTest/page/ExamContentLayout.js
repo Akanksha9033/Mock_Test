@@ -165,6 +165,7 @@ import SidebarNavigator from "./SidebarNavigator";
 import QuestionCard from "./QuestionCard";
 import Results from "./Results";
 import confetti from "canvas-confetti"; // ✅ added
+import BackButton from "./BackButton";
  
 const formatTime = (seconds) => {
   const mins = Math.floor(seconds / 60);
@@ -202,7 +203,8 @@ const ExamContentLayout = ({
   isPaused,
   setIsPaused,
   pauseKey,
-  timeKey
+  timeKey,
+  visitedQuestions
 }) => {
  
   // ✅ celebration wrapper
@@ -217,8 +219,13 @@ const ExamContentLayout = ({
     // call original submit handler
     handleConfirmSubmit();
   };
+
+
+  
  
   return (
+    <>
+      <BackButton/>
     <Container fluid style={{ backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
       <Row>
         <Col md={isStudent ? 9 : 12}>
@@ -244,6 +251,7 @@ const ExamContentLayout = ({
             </div>
           )}
  
+
           <QuestionCard
             currentQuestion={currentQuestion}
             currentQuestionIndex={currentQuestionIndex}
@@ -298,6 +306,7 @@ const ExamContentLayout = ({
               currentIndex={currentQuestionIndex}
               setCurrentQuestionIndex={setCurrentQuestionIndex}
               handleFinishTest={handleFinishTest}
+              visitedQuestions={visitedQuestions}
             />
           </Col>
         )}
@@ -323,6 +332,7 @@ const ExamContentLayout = ({
  
       {viewingSolutions && isStudent && <Results />}
     </Container>
+    </>
   );
 };
  

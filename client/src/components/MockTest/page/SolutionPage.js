@@ -13,60 +13,67 @@ const SolutionPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
-    const fetchResult = async () => {
-      try {
-        const res = await fetch(`${REACT_APP_API_URL}/api/results/${resultId}`);
-        const data = await res.json();
+  const fetchResult = async () => {
+    try {
+      const token = localStorage.getItem("token"); // ✅ Get token
+      const res = await fetch(`${REACT_APP_API_URL}/api/results/${resultId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Pass token in header
+        },
+      });
+      const data = await res.json();
 
-        const enrichedQuestions = (data.questions || []).map((q) => {
-          const answerEntry = data.answers?.[q._id];
+      const enrichedQuestions = (data.questions || []).map((q) => {
+        const answerEntry = data.answers?.[q._id];
 
-          let selectedAnswer = null;
-          let isCorrect = false;
+        let selectedAnswer = null;
+        let isCorrect = false;
 
-          const normalize = (val) =>
-            Array.isArray(val) ? val.sort().join(",") : String(val).trim();
+        const normalize = (val) =>
+          Array.isArray(val) ? val.sort().join(",") : String(val).trim();
 
-          const correct = normalize(q.correctAnswer || q.answer);
+        const correct = normalize(q.correctAnswer || q.answer);
 
-          if (answerEntry !== undefined && answerEntry !== null) {
-            selectedAnswer =
-              typeof answerEntry === "object" && answerEntry.selectedOption
-                ? answerEntry.selectedOption
-                : answerEntry;
+        if (answerEntry !== undefined && answerEntry !== null) {
+          selectedAnswer =
+            typeof answerEntry === "object" && answerEntry.selectedOption
+              ? answerEntry.selectedOption
+              : answerEntry;
 
-            const selected = normalize(selectedAnswer);
-            isCorrect = selected === correct;
-          }
+          const selected = normalize(selectedAnswer);
+          isCorrect = selected === correct;
+        }
 
-          return {
-            ...q,
-            options: q.options || [],
-            selectedAnswer,
-            correctAnswer: q.correctAnswer || q.answer,
-            isCorrect,
-          };
-        });
+        return {
+          ...q,
+          options: q.options || [],
+          selectedAnswer,
+          correctAnswer: q.correctAnswer || q.answer,
+          isCorrect,
+        };
+      });
 
-        setTest({
-          _id: data._id,
-          title: data.testTitle,
-          questions: enrichedQuestions,
-          time: data.testTime || "--",
-        });
+      setTest({
+        _id: data._id,
+        title: data.testTitle,
+        questions: enrichedQuestions,
+        time: data.testTime || "--",
+        isPaused: true,
+      });
 
-        setResult({
-          answers: data.answers,
-          score: data.score,
-          totalMarks: data.totalMarks,
-        });
-      } catch (error) {
-        console.error("Error fetching result:", error);
-      }
-    };
+      setResult({
+        answers: data.answers,
+        score: data.score,
+        totalMarks: data.totalMarks,
+      });
+    } catch (error) {
+      console.error("Error fetching result:", error);
+    }
+  };
 
-    fetchResult();
-  }, [resultId]);
+  fetchResult();
+}, [resultId]);
+
 
   if (!test || !result) return <p><LoadingAnimation /></p>;
 
@@ -79,6 +86,7 @@ const SolutionPage = () => {
       setCurrentQuestionIndex={setCurrentQuestionIndex}
       score={result.score}
       totalMarks={result.totalMarks}
+      
     />
   );
 };

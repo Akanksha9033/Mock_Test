@@ -275,7 +275,7 @@ import {
   FaFileAlt,
   FaUser,
   FaSignOutAlt,
-  FaBars,
+  
 } from "react-icons/fa";
  
 const TeacherSidebar = ({ isCollapsed, setIsCollapsed, onToggleCollapse }) => {
@@ -322,31 +322,13 @@ const TeacherSidebar = ({ isCollapsed, setIsCollapsed, onToggleCollapse }) => {
  
   return (
     <>
-      {/* FaBars toggler */}
-      {isCollapsed && (
-        <div
-          className="position-fixed"
-          style={{ top: "20px", left: "10px", zIndex: 2100, cursor: "pointer" }}
-          onClick={toggleSidebar}
-        >
-          <FaBars
-            style={{
-              fontSize: "26px",
-              color: "#333",
-              backgroundColor: "#fff",
-              padding: "6px",
-              borderRadius: "8px",
-              boxShadow: "0 0 6px rgba(0,0,0,0.2)",
-            }}
-          />
-        </div>
-      )}
+      
  
       <div
         ref={sidebarRef}
         className="bg-light border-end p-3 position-fixed d-flex flex-column justify-content-between"
         style={{
-          top: 0,
+          top: "54px",
           left: 0,
           bottom: 0,
           width: "250px",

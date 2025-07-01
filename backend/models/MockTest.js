@@ -19,7 +19,7 @@
 //     },
 //     options: [
 //       {
-//         label: { type: String, required: true },  
+//         label: { type: String, required: true },
 //         text: { type: String, required: true },
 //       },
 //     ],
@@ -44,7 +44,7 @@
 //     },
 //     section: { type: String, default: "" },
 //     marks: { type: Number, default: 1 },
-//     time: { type: Number, default: 30 },
+    
 //   },
 //   { _id: true }
 // );
@@ -55,22 +55,29 @@
 //     title: { type: String, required: true },
 //     price: { type: Number, default: 0 },
 //     isFree: { type: Boolean, required: true },
-//     duration: { type: Number, required: true }, // ✅ Added duration field (in minutes)
-//      // ✅ new field for storing wallpaper (base64 string or image URL)
-//      wallpaper: { type: String, default: null },
+//     duration: { type: Number, required: true }, // ✅ duration in minutes
+//     wallpaper: { type: String, default: null }, // ✅ base64 string or image URL
 //     questions: [questionSchema],
- 
-//     // ✅ Add this field to support activate/deactivate functionality
+
 //     status: {
 //       type: String,
 //       enum: ["active", "inactive"],
 //       default: "inactive",
+//     },
+
+//     // ✅ NEW FIELD: To track which admin created the test
+//     createdBy: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "User",
+//       required: true,
 //     },
 //   },
 //   { timestamps: true }
 // );
 
 // module.exports = mongoose.model("MockTest", mockTestSchema);
+
+
 
 
 const mongoose = require("mongoose");
@@ -119,7 +126,9 @@ const questionSchema = new mongoose.Schema(
     },
     section: { type: String, default: "" },
     marks: { type: Number, default: 1 },
-    time: { type: Number, default: 30 },
+    subtag: { type: String, default: "" },
+    approach: { type: String, default: "" },
+    performanceDomain: { type: String, default: "" },
   },
   { _id: true }
 );
@@ -130,22 +139,33 @@ const mockTestSchema = new mongoose.Schema(
     title: { type: String, required: true },
     price: { type: Number, default: 0 },
     isFree: { type: Boolean, required: true },
-    duration: { type: Number, required: true }, // ✅ duration in minutes
-    wallpaper: { type: String, default: null }, // ✅ base64 string or image URL
+    duration: { type: Number, required: true },
+    wallpaper: { type: String, default: null },
     questions: [questionSchema],
-
     status: {
       type: String,
       enum: ["active", "inactive"],
       default: "inactive",
     },
-
-    // ✅ NEW FIELD: To track which admin created the test
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    instituteName: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    instituteId: {
+  type: String,       // <---- ✅ changed from ObjectId to String
+  required: true,
+  trim: true,
+  minlength: 8,
+  maxlength: 8,
+}
+
   },
   { timestamps: true }
 );

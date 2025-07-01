@@ -1,25 +1,7 @@
-
-// const jwt = require('jsonwebtoken');
-// const User = require('..');
-
-// const authenticate = async (req, res, next) => {
-//   const token = req.headers.authorization?.split(" ")[1];
-//   if (!token) return res.status(401).json({ message: 'No token provided' });
-
-//   try {
-//     const decoded = jwt.verify(token, 'your_secret_key');
-//     req.user = await User.findById(decoded.id);
-//     next();
-//   } catch (err) {
-//     res.status(401).json({ message: 'Invalid token' });
-//   }
-// };
-
-// module.exports = authenticate;
-
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// ✅ Token verification middleware
 // ✅ Token verification middleware
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -32,29 +14,50 @@ const verifyToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
 
-    if (!user) {
-      return res.status(401).json({ message: "Invalid token" });
+    if (!decoded?.id) {
+      return res.status(401).json({ message: "Invalid token payload" });
     }
 
-    req.user = user;
+    const user = await User.findById(decoded.id).select("-password"); // remove password
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found for this token" });
+    }
+
+    req.user = {
+      id: user._id.toString(),               // ✅ ensure usable ID
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      instituteName: user.instituteName,     // ✅ preserve needed fields
+      instituteId: user.instituteId,
+      createdBy: user.createdBy
+    };
+
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    console.error("🔴 JWT verification failed:", err.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-// ✅ Role authorization middleware (case-insensitive fix)
-const verifyRole = (allowedRoles) => {
+
+// ✅ Role-based authorization middleware
+const verifyRole = (allowedRoles = []) => {
   return (req, res, next) => {
-    if (
-      !req.user ||
-      !allowedRoles.map(r => r.toLowerCase()).includes(req.user.role.toLowerCase())
-    ) {
-      return res.status(403).json({ message: "Access denied. Insufficient permissions." });
+    if (!req.user || !req.user.role) {
+      return res.status(403).json({ message: "Access denied: no user role found" });
     }
-    next();
+
+    const userRole = (req.user.role || "").toLowerCase();
+  const allowed = allowedRoles.map(r => r.toLowerCase());
+
+  if (!allowed.includes(userRole)) {
+    return res.status(403).json({ error: "Forbidden: Insufficient role" });
+  }
+
+  next();
   };
 };
 
